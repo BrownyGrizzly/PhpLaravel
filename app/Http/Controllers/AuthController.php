@@ -7,34 +7,41 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Phương thức hiển thị form đăng nhập
+    // Method to display the login form
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Phương thức xử lý việc đăng nhập
+    // Method to handle login
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $role = $user->role;
 
-            if ($role === 'reader') {
-                return redirect()->route('dashboard.reader');
-            } elseif ($role === 'editor') {
-                return redirect()->route('dashboard.editor');
-            } elseif ($role === 'writer') {
-                return redirect()->route('dashboard.writer');
+            // Check if 'role' property exists
+            if (isset($user->role)) {
+                $role = $user->role;
+
+                if ($role === 'reader') {
+                    return redirect()->route('dashboard.reader');
+                } elseif ($role === 'editor') {
+                    return redirect()->route('dashboard.editor');
+                } elseif ($role === 'writer') {
+                    return redirect()->route('dashboard.writer');
+                }
+            } else {
+                // Handle case where 'role' property is not found
+                return redirect()->back()->withErrors(['role' => 'User role not found']);
             }
         } else {
-            return redirect()->back()->withInput()->withErrors(['email' => 'Email hoặc mật khẩu không đúng.']);
+            return redirect()->back()->withErrors(['email' => 'Email hoặc mật khẩu không đúng.']);
         }
     }
 
-    // Phương thức đăng xuất
+    // Method to handle logout
     public function logout(Request $request)
     {
         Auth::logout();

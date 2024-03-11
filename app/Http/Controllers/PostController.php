@@ -12,13 +12,15 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         // Tạo một bài viết mới trong cơ sở dữ liệu
         $post = new Post();
         $post->title = $request->title;
         $post->content = $request->content;
-        $post->user_id = auth()->id(); // Lấy ID của người dùng hiện tại
+        $post->id = auth()->id();
+        $post->category_id = $request->category_id;
         $post->save();
 
         // Chuyển hướng về trang dashboard của Writer sau khi lưu bài viết thành công

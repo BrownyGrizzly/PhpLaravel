@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,18 +22,20 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 // Route cho trang đăng nhập và xác thực
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'checkRole:reader'])->group(function () {
-    Route::get('dashboard/reader', [DashboardController::class, 'reader'])->name('dashboard.reader');
+    Route::get('/dashboard/reader', [DashboardController::class, 'reader'])->name('dashboard.reader');
 });
 
 Route::middleware(['auth', 'checkRole:editor'])->group(function () {
-    Route::get('dashboard/editor', [DashboardController::class, 'editor'])->name('dashboard.editor');
+    Route::get('/dashboard/editor', [DashboardController::class, 'editor'])->name('dashboard.editor');
 });
 
 Route::middleware(['auth', 'checkRole:writer'])->group(function () {
-    Route::get('dashboard/writer', [DashboardController::class, 'writer'])->name('dashboard.writer');
+    Route::get('/dashboard/writer', [DashboardController::class, 'writer'])->name('dashboard.writer');
 });
 Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
